@@ -1,0 +1,255 @@
+/* Global Reset */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Arial', sans-serif;
+}
+
+/* Prevent scrollbars */
+html,
+body {
+  overflow: hidden;
+  width: 100%;
+  height: 100%;
+}
+
+/* Container Styling */
+.landing-container {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: linear-gradient(to bottom right, #1e3a8a, #1f2937, #000000);
+  color: #31367c;
+}
+
+.dotbg {
+  background-image: url('../../assets/dot.png');
+  background-repeat: no-repeat;
+  background-position-x: 30%;
+  background-position-y: 250%;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+/* Header Styles */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 2%;
+  width: 100%;
+  margin-bottom: 3rem;
+  position: absolute;
+  top: 0;
+  left: 0;
+  background: transparent !important;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+}
+
+.logo h1 {
+  font-size: 2rem;
+  color: #ffffff;
+  margin-left: 1rem;
+}
+
+.logo img {
+  height: auto;
+  max-height: 100px;
+  width: auto;
+  max-width: 150px;
+}
+
+.logo img:nth-of-type(2) {
+  height: 40px;
+  width: 40px;
+  margin-left: 1rem;
+}
+
+/* Main Content Styles */
+.main-content {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  padding: 2rem;
+  background-image: url("../../assets/Spiral.png");
+  background-repeat: no-repeat;
+  background-size: contain;
+  background-position: right center;
+  height: 100vh;
+}
+
+/* Row */
+.row {
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* Left Section */
+.left {
+  width: 50%;
+  padding: 2rem;
+}
+
+/* Title */
+.title {
+  font-size: 4rem;
+  margin-bottom: 3rem;
+  color: #6a4624;
+  max-width: 600px;
+}
+
+/* Subtitle */
+.subtitle {
+  font-size: 1.5rem;
+  margin-bottom: 3rem;
+  color: #ffffff;
+  line-height: 1.6;
+  max-width: 600px;
+}
+
+.headingColor {
+  color: #181d62;
+  font-weight: 800;
+  font-size: 2rem;
+}
+
+.headingColorBold {
+  font-weight: 700;
+  color: black;
+}
+
+.ansColor {
+  font-size: 1.18rem;
+  font-weight: 600;
+  margin-left: 0.4rem;
+}
+
+  .quizLogo {
+    width: 300px;
+    height: 200px;
+    max-width: 100%;
+    max-height: 100%;
+    display: block;
+  }
+  
+  .quizLogo:hover {
+    transform: scale(1.1);
+    transition: transform 0.3s ease-in-out;
+  }
+  
+  /* Right Section */
+  .right {
+    width: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .right img {
+    max-width: 100%;
+    height: auto;
+  }
+  
+  /* Button Styles */
+  .cta-button {
+    background: white;
+    color: #000000;
+    border: 2px solid #ffffff;
+    padding: 1.25rem 2.5rem;
+    font-size: 1.1rem;
+    font-weight: bold;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: all 0.3s ease;
+  }
+  
+  .cta-button:hover {
+    border-color: #0b1a7082;
+    background: #0B1A70;
+    color: #fff;
+    transform: translateY(-3px);
+  }
+  
+  /* Responsive Design */
+  @media (max-width: 768px) {
+    .row {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
+  
+    .left,
+    .right {
+        width: 100%;
+    }
+  
+    .logo img {
+        max-height: 80px;
+    }
+  
+    .title {
+        font-size: 2.5rem;
+    }
+  
+    .subtitle {
+        font-size: 1.2rem;
+    }
+  
+    .main-content {
+        background-size: cover;
+        background-position: center;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .logo img {
+        max-height: 60px;
+    }
+  
+    .title {
+        font-size: 2rem;
+    }
+  
+    .subtitle {
+        font-size: 1rem;
+    }
+  
+    .cta-button {
+        padding: 1rem 2rem;
+        font-size: 1rem;
+    }
+  }
+  
+  /* Footer style */
+  
+  .footer {
+      width: 100%;
+      text-align: center;
+      padding: 1rem;
+      color: #ffffff;
+      font-size: 1rem;
+      position: absolute;
+      bottom: 0;
+      left: 0;
+  }
+  
+  /* Ensure footer does not overlap content */
+  .landing-container {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+  }
+  
+  .main-content {
+    flex: 1;
+  }
+  

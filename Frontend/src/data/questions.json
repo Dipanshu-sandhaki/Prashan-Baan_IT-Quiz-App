@@ -1,0 +1,11 @@
+[
+    {
+      "id": 1,
+      "title": "Reverse a String",
+      "description": "Write a function to reverse a string in C.",
+      "example": { "input": "\"hello\"", "output": "\"olleh\"" },
+      "difficulty": "Easy",
+      "tags": ["string", "recursion"],
+      "code_template": "#include <stdio.h>\nvoid reverseString(char* str) {\n  // Your code here\n}"
+    }
+  ]

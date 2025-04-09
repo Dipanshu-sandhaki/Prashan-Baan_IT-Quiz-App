@@ -1,0 +1,137 @@
+.mainContainer {
+    /* padding: 0rem 48px; */
+    user-select: none;
+}
+
+.categoryManager ul {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    list-style: none;
+    margin-bottom: 32px;
+}
+
+.categoryManager ul li {
+    background: white;
+    border: .0625rem solid black;
+    cursor: pointer;
+    padding: .625rem .9375rem; 
+    margin: .3125rem;
+    border-radius: .3125rem;
+    transition: all 0.3s ease-in-out;
+}
+
+.selectedCategory {
+    background-color: #f5f5f5;
+    border: .0625rem solid #ccc;
+    color: #333;
+}
+
+.selectedCategory:hover {
+    background-color: #ddd;
+}
+
+.selected {
+    background-color: var(--color_green) !important;
+    border: .0625rem solid var(--color_green);
+    color: white;
+}
+
+
+.containerBox {
+    display: flex;
+    justify-content: center;
+    align-items: start;
+}
+
+.containerBox .left {
+    border: 1.6px solid black;
+    width: 70%;
+}
+
+.containerBox .left .row-line {
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+    padding: 8px 0;
+}
+
+.containerBox .left .line {
+    padding: .96px;
+    background-color: #000;
+    margin-bottom: .625rem;
+}
+
+.containerBox .left .group1 {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.containerBox .left .question_section {
+    padding: 16px;
+}
+
+.containerBox .left .question_section p {
+    margin-bottom: 24px;
+}
+
+.containerBox .left ul {
+    list-style: none;
+}
+
+.containerBox .left .option {
+    cursor: pointer;
+    padding: .625rem;
+    border: .0625rem solid #ccc;
+    border-radius: .3125rem;
+    margin: 8px 0;
+    transition: background 0.3s;
+}
+
+.option:hover {
+    background: #f0f0f0;
+}
+
+.option.selected {
+    background: var(--color_green);
+    color: white;
+    border: .0625rem solid var(--color_green);
+}
+
+
+.containerBox .right {
+    width: 30%;
+    /* display: flex;
+    justify-content: center;
+    align-items: center; */
+}
+
+.containerBox .right .timer_outline {
+    background-color: var(--color_blue);
+    padding: 1.25rem;
+    border-radius: .9375rem;
+    width: 80%;
+}
+
+.containerBox .right .timer {
+    background-color: var(--color_white);
+    border-radius: 2.1875rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 8px 0;
+}
+
+.containerBox .right .timer p {
+    font-family: "Port Lligat Slab", serif;
+    font-weight: 400;
+    font-style: normal;
+    font-size: 19.2px;
+}
+
+
+.containerBox .right .timer .count-down {
+    font-size: 64px;
+}
