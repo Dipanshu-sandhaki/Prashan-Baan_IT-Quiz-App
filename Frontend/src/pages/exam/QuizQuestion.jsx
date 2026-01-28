@@ -16,7 +16,7 @@ function QuizQuestions() {
   const { quizId } = useParams();
 
   // ⭐⭐⭐ GUEST MODE SUPPORT (MAIN FIX) ⭐⭐⭐
-  const isGuest = localStorage.getItem("guest") === "true";
+  const isGuest = localStorage.getItem("guestMode") === "true";
 
   const user_id = isGuest
     ? "guest-" + Math.random().toString(36).substring(2, 10) // safe dummy id
