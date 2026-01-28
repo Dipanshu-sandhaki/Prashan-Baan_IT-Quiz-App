@@ -2,7 +2,7 @@ import axios from "axios";
 import showAlert from "../components/alertMessage/Alert";
 
 // 🔥 Correct backend base URL
-const baseURL = "http://localhost:3000/api/v1";
+const baseURL = "https://prashan-baan-backend.onrender.com/api/v1";
 
 // --------------------------------------------------------
 // GET TOKEN
