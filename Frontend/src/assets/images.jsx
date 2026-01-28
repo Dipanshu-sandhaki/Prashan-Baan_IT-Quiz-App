@@ -1,26 +1,23 @@
-// src/assets/images.jsx
-
-// Assets INSIDE src/assets folder
 import Logo from "./UULogomain.png";
 import PC from "./PC.png";
-import UULogo from "./UULogo.png";
+import UULogo from "./UULogo.png"; 
 import Quizlogo from "./Quizlogo.png";
+import ITUtsav from "./ITUtsavLogo.png";
 import LandingBG from "./landingBG.svg";
+import Itquiz from "./logo2.png";
 import thank from "./thank.png";
 import login from "./LoginMain.png";
-
-// Assets inside PUBLIC folder (NO IMPORT)
-const ITUtsav = "/ITUtsavLogo.png";
 
 const images = {
   Logo,
   PC,
   UULogo,
+  Itquiz,
   Quizlogo,
   ITUtsav,
   LandingBG,
   thank,
-  login,
+  login
 };
 
 export default images;
