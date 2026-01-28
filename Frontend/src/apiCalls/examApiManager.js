@@ -2,7 +2,7 @@ import axios from "axios";
 import showAlert from "../components/alertMessage/Alert";
 
 // 🔥 Correct backend base URL
-const baseURL = "https://prashan-baan-backend.onrender.com/api/v1";
+const baseURL = import.meta.env.VITE_API_URL;
 
 // --------------------------------------------------------
 // GET TOKEN
