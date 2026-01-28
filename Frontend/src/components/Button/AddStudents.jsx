@@ -19,8 +19,8 @@ const AddNewStudent = ({ setStudents, setShowAddPopup,onClose }) => {
   
     const handleSubmit = async(e) => {
       e.preventDefault();
-      const response= await addNewStudent(form.username,form.name,form.number,form.password);
       setLoading(true);
+      const response= await addNewStudent(form.username,form.name,form.number,form.password);
       if (response.status === 201) {
         setLoading(false);
         showAlert({

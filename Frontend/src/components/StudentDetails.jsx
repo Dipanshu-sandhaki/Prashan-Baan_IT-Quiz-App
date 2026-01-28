@@ -2,12 +2,13 @@ import React, { useState, useEffect, useMemo } from "react";
 import StudentTable from "./StudentTable";
 import AddStudent from "./Button/AddStudents";
 import EditStudent from "./Button/EditStudent";
-import { getAllStudent } from "../apiCalls/adminApiManager";
+import { deleteUser, getAllStudent } from "../apiCalls/adminApiManager";
 import { deleteStudent } from "../utils/api"; // Import API functions
 import showAlert from "./alertMessage/Alert";
 import LoadingMenu from "./loader";
 import { FaAngleLeft, FaAngleRight } from "react-icons/fa";
 import AddNewStudent from "./Button/AddStudents";
+import Swal from "sweetalert2";
 
 const StudentDetails = () => {
   const [students, setStudents] = useState([]);
@@ -79,9 +80,38 @@ const StudentDetails = () => {
   };
 
   const handleDelete = async (id) => {
-    const isDeleted = await deleteStudent(id);
-    if (isDeleted) {
-      setStudents(students.filter((student) => student.id !== id));
+    const confirm = await Swal.fire({
+      title: 'Are you sure?',
+      text: "This user will be deleted permanently!",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#d33',
+      cancelButtonColor: '#3085d6',
+      confirmButtonText: 'Yes, delete it!',
+    });
+  
+    if (confirm.isConfirmed) {
+      try {
+        await deleteUser(id);
+  
+        setStudents((prevUsers) => prevUsers.filter(students => students._id !== id));
+
+        Swal.fire({
+          title: 'Deleted!',
+          text: 'The user has been deleted successfully.',
+          icon: 'success',
+          timer: 2000,
+          showConfirmButton: false,
+        });
+  
+        // You can also trigger a re-fetch here or remove the user from local state
+      } catch (error) {
+        Swal.fire({
+          title: 'Error!',
+          text: error.response?.data?.message || 'Failed to delete the user.',
+          icon: 'error',
+        });
+      }
     }
   };
 
@@ -107,7 +137,7 @@ const StudentDetails = () => {
                 <th className="py-4 px-6 text-center font-semibold">ID</th>
                 <th className="py-4 px-6 text-center font-semibold">Name</th>
                 <th className="py-4 px-6 text-center font-semibold">Email</th>
-                <th className="py-4 px-6 text-center font-semibold">DOB</th>
+                <th className="py-4 px-6 text-center font-semibold">Number</th>
                 <th className="py-4 px-6 text-center font-semibold">Action</th>
               </tr>
             </thead>
@@ -121,21 +151,10 @@ const StudentDetails = () => {
                   >
                     <td className="py-3 px-6 text-center border-t">{data._id}</td>
                     <td className="py-3 px-6 text-center border-t">{data.name}</td>
-                    <td className="py-3 px-6 text-center border-t">{data.email}</td>
-                    <td className="py-3 px-6 text-center border-t">
-                      {new Date(data.dob).toLocaleDateString("en-GB", {
-                        day: "2-digit",
-                        month: "2-digit",
-                        year: "numeric",
-                      })}
+                    <td className="py-3 px-6 text-center border-t">{data.username}</td>
+                    <td className="py-3 px-6 text-center border-t">{data.number}
                     </td>
                     <td className="py-3 px-6 text-center border-t space-x-2">
-                      <button
-                        onClick={() => handleEdit(data)}
-                        className="bg-blue-600 hover:bg-blue-700 text-white text-sm py-1.5 px-4 rounded-md transition"
-                      >
-                        Edit
-                      </button>
                       <button
                         onClick={() => handleDelete(data._id)}
                         className="bg-red-600 hover:bg-red-700 text-white text-sm py-1.5 px-4 rounded-md transition"

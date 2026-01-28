@@ -3,7 +3,6 @@ import { asyncHandler } from "../../utils/asyncHandler.js";
 import { paginate } from "../../utils/paginate.js";
 import { errorResponse, successResponse } from "../../utils/responseHandler.js";
 import { validateFields } from "../../utils/validateFields.js";
-import { client } from "../../config/redis.js";
 import CodeAttempt from "../../models/codeAttempt.model.js";
 
 // Create add new Coding Problem
@@ -112,8 +111,6 @@ export const updateProblemById = asyncHandler(async (req, res) => {
 
   try {
     // Logging for debug
-    console.log("Updating Problem ID:", id);
-    console.log("Payload:", req.body);
 
     const updatedProblem = await Problem.findByIdAndUpdate(
       id,
@@ -200,7 +197,6 @@ export const saveProblem = asyncHandler(async (req, res) => {
     let existingAttempt = await CodeAttempt.findOne({ student_id, problem_id });
 
     if (existingAttempt) {
-      console.log("Updating existing record...");
 
       // Ensure answers array exists
       if (existingAttempt.answers.length > 0) {
@@ -217,7 +213,6 @@ export const saveProblem = asyncHandler(async (req, res) => {
 
       return successResponse(res, 200, "Code Solution Updated Successfully");
     } else {
-      console.log("Creating new record...");
 
       // Create new attempt
       await CodeAttempt.create({

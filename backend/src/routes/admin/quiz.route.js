@@ -1,15 +1,15 @@
 import express from 'express';
 import { addQuestion, createQuiz, deleteQuestion, getAllQuestions, getAllQuiz, updateQuestion, updateQuiz, deleteQuiz, getQuizById } from '../../controllers/admin/quiz.controller.js';
-import { getAllUser } from '../../controllers/admin/users.controller.js';
+import { deleteUser, getAllUser } from '../../controllers/admin/users.controller.js';
 import { errorResponse } from '../../utils/responseHandler.js';
-import { addCodingProblem, deleteCodingProblemById, deleteTestCase, getAllProblems, getProblemById, saveProblem, updateProblemById } from '../../controllers/admin/codingProblem.controller.js';
+// import { addCodingProblem, deleteCodingProblemById, deleteTestCase, getAllProblems, getProblemById, saveProblem, updateProblemById } from '../../controllers/admin/codingProblem.controller.js';
 import { generateResult, getAllResults } from '../../controllers/admin/result.controller.js';
 
 const adminQuiz = express.Router();
 
 // ************************User Related Routes************************************
 adminQuiz.get('/all-users', getAllUser);
-
+adminQuiz.delete('/delete-user/:id',deleteUser);
 
 // **************************Quiz&Question Routes*************************************
 // Create Quiz
@@ -60,13 +60,13 @@ adminQuiz.delete('/delete-question', (req, res) => {
 adminQuiz.delete("/delete-question/:id", deleteQuestion);
 
 // ************************Coding Problem Routes************************************
-adminQuiz.post('/add-problem', addCodingProblem);
-adminQuiz.get('/all-problems', getAllProblems);
-adminQuiz.get('/problem/:id', getProblemById);
-adminQuiz.post('/update-problem/:id', updateProblemById);
-adminQuiz.delete('/delete-problem/:problemId/testcase/:testCaseId', deleteTestCase);
-adminQuiz.delete('/delete-problem/:problemId', deleteCodingProblemById);
-adminQuiz.get('/results', getAllResults);
+// adminQuiz.post('/add-problem', addCodingProblem);
+// adminQuiz.get('/all-problems', getAllProblems);
+// adminQuiz.get('/problem/:id', getProblemById);
+// adminQuiz.post('/update-problem/:id', updateProblemById);
+// adminQuiz.delete('/delete-problem/:problemId/testcase/:testCaseId', deleteTestCase);
+// adminQuiz.delete('/delete-problem/:problemId', deleteCodingProblemById);
+adminQuiz.get('/results/:quizId', getAllResults);
 adminQuiz.post('/generate-result/:quiz_id', generateResult);
 
 export default adminQuiz;

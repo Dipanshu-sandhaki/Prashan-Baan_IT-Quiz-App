@@ -1,23 +1,15 @@
 import React from 'react';
-import { Link } from 'react-router';
+import { Link } from 'react-router-dom';
 
-
-function Button({text, link='#'}) {
+function Button({ text, link = "#" }) {
   return (
-      <button className="cta-button">
-    <Link to={link}>{text}</Link>
-  </button>
-  )
+    <Link 
+      to={link} 
+      className="cta-button inline-block"
+    >
+      {text}
+    </Link>
+  );
 }
 
-export default Button
-
-// import React from 'react';
-
-// const Button = ({ text }) => (
-//   <button className="cta-button">
-//     {text}
-//   </button>
-// );
-
-// export default Button;
+export default Button;

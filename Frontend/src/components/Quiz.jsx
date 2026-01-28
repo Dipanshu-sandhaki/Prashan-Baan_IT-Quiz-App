@@ -12,6 +12,7 @@ import LoadingMenu from "./loader";
 import { addNewQuiz } from "../apiCalls/adminApiManager";
 import showAlert from "./alertMessage/Alert";
 
+
 const Quiz = () => {
   const [quizzes, setQuizzes] = useState([]);
   const [quizData, setQuizData] = useState({

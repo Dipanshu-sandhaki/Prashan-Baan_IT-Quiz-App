@@ -36,10 +36,8 @@ export const getAllQuiz = asyncHandler(async (req, res) => {
 
     try {
         res.setHeader("Cache-Control", "no-store"); // Disable caching
-        console.log("Hello");
 
         const quizzes = await paginate(Quiz, {}, page, limit);
-        console.log("quizzes", quizzes);
 
         if (!quizzes || !quizzes.data || quizzes.data.length === 0) {
             return errorResponse(res, 404, "No quizzes found", null);

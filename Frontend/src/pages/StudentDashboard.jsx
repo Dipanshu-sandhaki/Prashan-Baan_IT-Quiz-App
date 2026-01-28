@@ -9,66 +9,65 @@ import { getAllQuizes } from "../apiCalls/examApiManager";
 const StudentDashboard = () => {
   const [activeMenu, setActiveMenu] = useState("Quiz");
   const [quizzes, setQuizzes] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  const examStatus = localStorage.getItem("isExamSubmitted");
-
+  // Load quiz list
   useEffect(() => {
-    const getData = async () => {
+    const fetchQuiz = async () => {
       try {
         const data = await getAllQuizes();
-        if (Array.isArray(data)) {
-          setQuizzes(data);
-        } else {
-          console.error("Invalid data format:", data);
-          setQuizzes([]); // Ensure quizzes is always an array
-        }
-      } catch (error) {
-        console.error("Error fetching quizzes:", error);
-        setQuizzes([]); // Prevents crashing if API fails
+        setQuizzes(Array.isArray(data) ? data : []);
+      } catch (err) {
+        console.error("Unable to load quizzes:", err);
+        setQuizzes([]);
+      } finally {
+        setLoading(false);
       }
     };
 
-    if (examStatus === "No") {
-      getData();
-    }
+    fetchQuiz();
   }, []);
 
   return (
-    <div className="flex flex-col min-h-screen bg-gradient-to-br from-start via-middle to-end relative overflow-hidden px-0 bg-cover bg-no-repeat w-screen bg-center h-screen">
-      {/* Header */}
+    <div className="flex flex-col min-h-screen bg-gradient-to-br from-start via-middle to-end w-screen">
       <StudentHeader />
 
-      {/* Main Content */}
       <div className="flex flex-1 overflow-hidden">
-        {/* Sidebar */}
-        <StudentSidebar setActiveMenu={setActiveMenu} className="h-full flex-shrink-0" />
+        <StudentSidebar setActiveMenu={setActiveMenu} />
 
-        {/* Page Content */}
         <div className="flex-1 p-8 overflow-y-auto">
           {activeMenu === "Instruction" && <StudentInstruction />}
+
           {activeMenu === "Quiz" && (
-            <div className="flex flex-wrap gap-5">
-              {quizzes.length > 0 ? (
-                quizzes.map((q) => (
-                  <StudentQuiz
-                    key={q._id} // Use _id as key (best practice)
-                    title={q.quiz_name}
-                    description={q.description}
-                    date={q.quiz_date}
-                    time={q.quiz_time}
-                    quizID={q._id}
-                  />
-                ))
+            <>
+              {loading ? (
+                <p className="text-center text-gray-300">Loading quizzes...</p>
               ) : (
-                <p className="text-center text-gray-500 w-full">No quizzes available</p>
+                <div className="flex flex-wrap gap-5">
+                  {quizzes.length > 0 ? (
+                    quizzes.map((q) => (
+                      <StudentQuiz
+                        key={q._id}
+                        title={q.quiz_name}
+                        description={q.description}
+                        date={q.quiz_date}
+                        time={q.quiz_time}
+                        quizID={q._id}
+                      />
+                    ))
+                  ) : (
+                    <p className="text-center text-gray-300 w-full">
+                      No quizzes available
+                    </p>
+                  )}
+                </div>
               )}
-            </div>
+            </>
           )}
         </div>
       </div>
 
-      {/* Footer */}
-      <Footer className="mt-auto" />
+      <Footer />
     </div>
   );
 };

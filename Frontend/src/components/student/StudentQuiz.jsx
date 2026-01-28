@@ -1,152 +1,159 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
+// -----------------------
+// Format countdown
+// -----------------------
 const formatTime = (seconds) => {
-  const hrs = Math.floor(seconds / 3600);
-  const mins = Math.floor((seconds % 3600) / 60);
-  const secs = seconds % 60;
-  return `${hrs}h ${mins}m ${secs}s`;
+  const h = Math.floor(seconds / 3600);
+  const m = Math.floor((seconds % 3600) / 60);
+  const s = seconds % 60;
+  return `${h}h ${m}m ${s}s`;
+};
+
+// -----------------------
+// Convert date+time → JS Date
+// -----------------------
+const getDateTimeObject = (quizDate, quizTime) => {
+  try {
+    const dateObj = new Date(quizDate);
+    const [hrs, mins] = quizTime.split(":").map(Number);
+    dateObj.setHours(hrs, mins, 0, 0);
+    return dateObj;
+  } catch {
+    return new Date();
+  }
+};
+
+// -----------------------
+// Format full datetime
+// -----------------------
+const formatDateTime = (dateObj) => {
+  return dateObj.toLocaleString("en-GB", {
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+  });
 };
 
 export const StudentQuiz = ({
-  isDisable = false,
   title,
   description,
   date,
   time,
-  quizstatus,
-  quizID
+  quizID,
 }) => {
-  const [quiz, setQuiz] = useState({});
-  const [status, setStatus] = useState(quizstatus);
-  const [testDate, setTestDate] = useState("N/A");
-  const [timer, setTimer] = useState(null);
-  const [startNow, setStartNow] = useState(isDisable);
   const navigate = useNavigate();
 
-  const formatDateTime = (quizDate, quizTime) => {
-    // Extract timestamp from quiz_date if it's an object
-    let dateObj;
-    if (quizDate?.$timestamp) {
-      dateObj = new Date(parseInt(quizDate.$timestamp) * 1000); // Convert timestamp to milliseconds
-    } else {
-      dateObj = new Date(quizDate); // If it's already a date string, use it directly
-    }
+  // ⭐ Detect Guest Mode
+  const isGuest = localStorage.getItem("guestMode") === "true";
 
-    // Extract hours and minutes from quiz_time
-    const [hours, minutes] = quizTime.split(":").map(Number);
+  // Guest Mode Logic → Always Fast-Start
+  const [status, setStatus] = useState(isGuest ? "Ongoing" : "Upcoming");
+  const [timer, setTimer] = useState(isGuest ? null : null);
+  const [startNow, setStartNow] = useState(isGuest ? false : true);
+  const [testDate, setTestDate] = useState(null);
 
-    // Set the extracted time to the date object
-    dateObj.setHours(hours, minutes, 0); // 0 seconds
+  // -----------------------
+  // For logged-in users only
+  // -----------------------
+  useEffect(() => {
+    if (isGuest) return; // Guest skip everything
 
-    // Format the date and time as "DD-MM-YYYY HH:mm:ss"
-    return dateObj.toLocaleString("en-GB", {
-      day: "2-digit",
-      month: "2-digit",
-      year: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
-      second: "2-digit",
-      hour12: false,
-    });
-  };
+    const quizDateObj = getDateTimeObject(date, time);
+    setTestDate(quizDateObj);
+  }, [date, time, isGuest]);
 
   useEffect(() => {
-    const fetchQuizData = async () => {
-      try {
-        const data = {
-          title: title,
-          description: description,
-          testDate: formatDateTime(date, time), // 3 PM IST converted to UTC
-        };
+    if (isGuest || !testDate) return;
 
-        setQuiz({ title: title, description: description });
-        setTestDate(data.testDate);
-      } catch (error) {
-        console.error("Error fetching quiz data:", error);
-      }
-    };
+    const checkState = () => {
+      const now = new Date();
 
-    fetchQuizData();
-  }, []);
-
-  useEffect(() => {
-    const func = () => {
-      const quizStarted = new Date(testDate);
-      const currentTime = new Date();
-      setStartNow(currentTime < quizStarted);
-      if (currentTime <= quizStarted && quizstatus !== "Expried" && quizstatus !=='Upcomming' && quizstatus!==null) {
+      if (now < testDate) {
+        const diff = Math.floor((testDate - now) / 1000);
+        setTimer(diff);
+        setStatus("Upcoming");
+        setStartNow(true);
+      } else {
         setStatus("Ongoing");
+        setTimer(null);
+        setStartNow(false);
       }
     };
 
-    func();
+    checkState();
+    const interval = setInterval(checkState, 1000);
 
-    const interval = setInterval(func, 1000);
     return () => clearInterval(interval);
-  }, [testDate, quizstatus]);
+  }, [testDate, isGuest]);
 
-  // Timer countdown effect
   useEffect(() => {
+    if (isGuest) return;
+
     if (timer !== null && timer > 0) {
       const interval = setInterval(() => {
-        setTimer((prev) => {
-          if (prev <= 1) {
-            clearInterval(interval);
-            setStatus("Ongoing");
-            setStartNow(true);
-            return 0;
-          }
-          return prev - 1;
-        });
+        setTimer(prev => (prev > 1 ? prev - 1 : 0));
       }, 1000);
-
       return () => clearInterval(interval);
     }
-  }, [timer]);
+  }, [timer, isGuest]);
 
   return (
-    <div className="p-6 text-white bg-opacity-30 shadow-lg rounded-lg w-[400px] text-center border border-gray-200 hover:shadow-xl transition-transform transform hover:scale-105 duration-300">
-      <h2 className="text-2xl font-bold text-blue-100 mb-4">
-        {quiz?.title || "Untitled Quiz"}
-      </h2>
-      <p className="mb-4 text-white">
-        {quiz?.description || "No description available."}
+    <div className="p-6 text-white bg-opacity-30 shadow-lg rounded-lg w-[400px] text-center border border-gray-300 hover:shadow-xl transition-transform hover:scale-105 duration-300">
+      
+      <h2 className="text-2xl font-bold mb-2">{title}</h2>
+
+      <p className="mb-4 text-gray-200">
+        {description || "No description available."}
       </p>
+
+      {/* Status */}
       <p className="text-white font-medium">
         Status:{" "}
         <span
           className={`font-semibold ${
-            status === "Expired"
-              ? "text-red-600"
+            status === "Upcoming"
+              ? "text-green-400"
               : status === "Ongoing"
-              ? "text-orange-600"
-              : "text-green-600"
+              ? "text-orange-400"
+              : "text-red-500"
           }`}
         >
-          {status}
+          {isGuest ? "Guest Instant Access" : status}
         </span>
       </p>
-      <p className="text-white font-medium">
-        Event Date: {new Date(testDate).toLocaleString()}
-      </p>
 
-      {timer !== null && status === "Starting Soon" && (
-        <p className="text-lg text-blue-600 font-semibold mt-2">
+      {/* Event Date */}
+      {!isGuest && (
+        <p className="text-gray-100">
+          Event: {testDate ? formatDateTime(testDate) : "N/A"}
+        </p>
+      )}
+
+      {/* Countdown (Not for guest) */}
+      {!isGuest && status === "Upcoming" && timer !== null && (
+        <p className="text-blue-400 font-semibold mt-2">
           Starts in: {formatTime(timer)}
         </p>
       )}
 
+      {/* Start Quiz Button */}
       <button
         onClick={() => navigate(`/instructions/${quizID}`)}
+        disabled={!isGuest && startNow}
         className={`mt-4 px-5 py-2 text-white font-semibold rounded-lg shadow-md transition-all duration-300 ${
-          startNow
+          isGuest
+            ? "bg-green-600 hover:bg-green-700"
+            : startNow
             ? "bg-gray-400 cursor-not-allowed"
             : "bg-green-600 hover:bg-green-700"
         }`}
-        disabled={startNow}
       >
-        {status === "Expired" ? "View Results" : "Start Quiz"}
+        {isGuest ? "Start Instantly (Guest)" : "Start Quiz"}
       </button>
     </div>
   );

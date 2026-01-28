@@ -5,7 +5,7 @@ import Footer from "../../utils/Footer";
 import LoadingMenu from "../../components/loader";
 import Result from "./Result";
 import { motion } from "framer-motion";
-import { generateResult, getAllQuizzes } from "../../apiCalls/adminApiManager"; // Assume getQuizList is added
+import { generateResult, getAllQuizzes, getResultsByQuizId } from "../../apiCalls/adminApiManager";
 import showAlert from "../alertMessage/Alert";
 
 const ShowResult = () => {
@@ -13,14 +13,15 @@ const ShowResult = () => {
   const [generated, setGenerated] = useState(false);
   const [quizId, setQuizId] = useState("");
   const [quizzes, setQuizzes] = useState([]);
+  const [resultData, setResultData] = useState([]);
 
+  // Fetch quiz list
   useEffect(() => {
     const fetchQuizzes = async () => {
       try {
-        const data = await getAllQuizzes(); // API call to fetch quiz list
-        
+        const data = await getAllQuizzes();
         if (data) {
-          setQuizzes(data || []);
+          setQuizzes(data);
         } else {
           showAlert({ title: "Error", message: "Unable to fetch quizzes", icon: "error" });
         }
@@ -42,16 +43,54 @@ const ShowResult = () => {
     setLoading(true);
     setGenerated(false);
 
-    const result = await generateResult(quizId);
+    try {
+      // STEP 1: Check if results already exist
+      const existing = await getResultsByQuizId(quizId);
 
-    if (result.status === 202) {
-      setTimeout(() => {
-        setLoading(false);
+      if (existing && existing.data && existing.data.length > 0) {
+        showAlert({
+          title: "Result Available",
+          message: "Results already exist. Displaying saved results.",
+          icon: "info",
+        });
+
+        setResultData(existing.data);
         setGenerated(true);
-      }, 3000);
-    } else {
+        setLoading(false);
+        return;
+      }
+
+      // STEP 2: Generate results (if not found)
+      const result = await generateResult(quizId);
+
+      if (result.status === 202) {
+        setTimeout(async () => {
+          const fetchedResults = await getResultsByQuizId(quizId);
+
+          if (fetchedResults && fetchedResults.results) {
+            setResultData(fetchedResults.results);
+            setGenerated(true);
+          } else {
+            showAlert({ title: "Error", message: "Failed to fetch generated result", icon: "error" });
+          }
+
+          setLoading(false);
+        }, 3000);
+      } else {
+        setLoading(false);
+        showAlert({
+          title: "Error",
+          message: result.message || "Unable to generate result",
+          icon: "error",
+        });
+      }
+    } catch (error) {
       setLoading(false);
-      showAlert("Error", result.message, "error");
+      showAlert({
+        title: "Error",
+        message: "Something went wrong while processing the result",
+        icon: "error",
+      });
     }
   };
 
@@ -75,7 +114,7 @@ const ShowResult = () => {
                 <select
                   value={quizId}
                   onChange={(e) => setQuizId(e.target.value)}
-                  className="w-full p-3 rounded-lg shadow-sm border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full p-3 rounded-lg bg-white text-black shadow-sm border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
                 >
                   <option value="">-- Choose a Quiz --</option>
                   {quizzes.map((quiz) => (
@@ -90,10 +129,9 @@ const ShowResult = () => {
               <div className="flex justify-start">
                 <button
                   onClick={handleClick}
-                  className={`relative flex items-center justify-center px-6 py-3 font-semibold text-white rounded-lg shadow-md transition-all ${quizId
-                    ? "bg-blue-600 hover:bg-blue-700"
-                    : "bg-gray-400 cursor-not-allowed"
-                    }`}
+                  className={`relative flex items-center justify-center px-6 py-3 font-semibold text-white rounded-lg shadow-md transition-all ${
+                    quizId ? "bg-blue-600 hover:bg-blue-700" : "bg-gray-400 cursor-not-allowed"
+                  }`}
                   disabled={!quizId || loading}
                 >
                   {loading ? (
@@ -113,7 +151,7 @@ const ShowResult = () => {
               </div>
             </div>
           ) : (
-            <Result />
+            <Result results={resultData} />
           )}
         </div>
       </div>

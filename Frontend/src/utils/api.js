@@ -2,7 +2,7 @@ import axios from "axios";
 import { LANGUAGE_VERSIONS } from "./constants";
 import { problem } from "../data/QuizData";
 
-const API_BASE_URL = import.meta.env.VITE_API_URL;
+const API_BASE_URL = "https://prashnabaan.onrender.com/api/v1";
 const baseURL2 = import.meta.env.VITE_API_URL2;
 const getAuthToken = () => localStorage.getItem("token");
 

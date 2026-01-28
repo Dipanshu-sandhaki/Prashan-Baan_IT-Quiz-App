@@ -1,86 +1,107 @@
 import axios from "axios";
 import showAlert from "../components/alertMessage/Alert";
 
-const baseURL = import.meta.env.VITE_API_URL;
-const baseURL2 = import.meta.env.VITE_API_URL2;
-const baseURL3 = import.meta.env.VITE_API_URL3;
+// 🔥 Correct backend base URL
+const baseURL = "http://localhost:3000/api/v1";
+
+// --------------------------------------------------------
+// GET TOKEN
+// --------------------------------------------------------
 const getAuthToken = () => localStorage.getItem("token");
 
+// --------------------------------------------------------
+// GENERATE SAFE AUTH HEADER (Guest + User Both Supported)
+// --------------------------------------------------------
+const getAuthHeader = () => {
+  const token = getAuthToken();
+  const guest = localStorage.getItem("guestMode") === "true";
+
+  // Guest → no token required
+  if (guest) {
+    return {};
+  }
+
+  // Logged-in user → must send Bearer token
+  return token ? { Authorization: `Bearer ${token}` } : {};
+};
+
+// --------------------------------------------------------
+// 1️⃣ GET ALL QUIZZES (SAFE FOR GUEST MODE)
+// --------------------------------------------------------
 export const getAllQuizes = async () => {
   try {
-    console.log(baseURL);
-    const token = getAuthToken();
+    console.log("📡 Fetching quizzes from:", `${baseURL}/competition/all-quiz`);
+
     const response = await axios.get(`${baseURL}/competition/all-quiz`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
+      headers: getAuthHeader(),
     });
 
-    console.log(response.data.data);
-    // console.log(response.data['data'].question);
-    return response.data["data"];
+    return Array.isArray(response.data?.data) ? response.data.data : [];
   } catch (error) {
-    console.error("Error fetching quiz questions:", error);
-    throw error;
+    console.error("❌ Error fetching quizzes:", error);
+    return [];
   }
 };
 
+// --------------------------------------------------------
+// 2️⃣ GET ALL QUESTIONS OF A QUIZ
+// --------------------------------------------------------
 export const getAllQuestions = async (quizId) => {
   try {
-    console.log(baseURL);
-    const token = getAuthToken();
     const response = await axios.get(
-      `${baseURL}/competition/question/${quizId}`,
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
+      `${baseURL}/competition/questions/${quizId}`,
+      { headers: getAuthHeader() },
     );
 
-    return response.data["data"];
+    return response.data?.data;
   } catch (error) {
-    console.error("Error fetching quiz questions:", error);
+    console.error("❌ Error fetching quiz questions:", error);
     throw error;
   }
 };
 
-// Submit Quiz
+// --------------------------------------------------------
+// 3️⃣ SUBMIT QUIZ (Guest + Auth Both Supported)
+// --------------------------------------------------------
 export const SubmitQuizToDB = async (user_id, quiz_id, answers) => {
   try {
-    const token = getAuthToken();
     const response = await axios.post(
-      `${baseURL2}/competition/submit-quiz`,
-      {
-        user_id: user_id,
-        quiz_id: quiz_id,
-        answers: answers,
-      },
+      `${baseURL}/competition/submit-quiz`,
+      { user_id, quiz_id, answers },
       {
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
+          ...getAuthHeader(),
         },
-      }
+      },
     );
+
     return response.data;
   } catch (error) {
-    showAlert({ title: "Error", text: "Something went wrong! Please contact to development team", icon: "error" });
+    showAlert({
+      title: "Error",
+      text: "Something went wrong! Please contact development team",
+      icon: "error",
+    });
+
     console.error(
-      "Error in addNewStudent:",
-      error.response?.data || error.message
+      "❌ Error in SubmitQuizToDB:",
+      error.response?.data || error.message,
     );
+
     throw error;
   }
 };
 
-// Get the api coding problems
+// --------------------------------------------------------
+// 4️⃣ GET CODING PROBLEMS
+// --------------------------------------------------------
 export const getCodingProblems = async () => {
   try {
-    const response = await axios.get(`${baseURL3}/problems`);
-    return response.data["problem"];
+    const response = await axios.get(`${baseURL}/problems`);
+    return response.data?.problem || [];
   } catch (error) {
-    console.error("Error fetching quiz questions:", error);
+    console.error("❌ Error fetching coding problems:", error);
     throw error;
   }
 };

@@ -6,33 +6,25 @@ export const guidelines = [
 ];
 
 export const examStructure = {
-  "2. Section 1: Multiple Choice Questions (MCQs)": [
-    "There are 80 MCQs divided into 4 modules.",
-    "Each module contains 20 questions based on different subjects:",
+  "2. Multiple Choice Questions (MCQs)": [
+    "There are 40 MCQs divided into 4 modules.",
+    "Each module contains 10 questions based on different subjects:",
     "Module 1: Programming in C",
     "Module 2: Networking",
     "Module 3: Database Management System (DBMS)",
     "Module 4: Computer Fundamentals",
     "Each correct answer carries 1 mark.",
     "Negative marking: 1/3rd mark will be deducted for every incorrect answer.",
-    "Important: Section 2 (Coding-Based Questions) will only be unlocked after completing Section 1.",
-  ],
-  "Section 2: Coding-Based Questions": [
-    "This section consists of 2 coding questions.",
-    "Each question carries 10 marks, totaling 20 marks.",
-  ],
+  ]
 };
 
 export const scoring = [
-  "Total Marks: 100",
-  "MCQ Section: 80 marks",
-  "Coding Section: 20 marks",
+  "Total Marks: 160",
   "The final score will be calculated based on correct answers after applying negative marking.",
 ];
 
 export const timeLimit = [
-  "Total duration: 1 hour 30 minutes (90 minutes).",
-  "Section 1 (MCQs) must be completed before attempting Section 2 (Coding).",
+  "Total duration: 40 minutes.",
 ];
 
 export const importantInstructions = [

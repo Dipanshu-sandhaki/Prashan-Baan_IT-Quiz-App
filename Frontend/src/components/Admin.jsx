@@ -24,7 +24,7 @@ const Admin = ({ setActiveMenu, user, quiz }) => {
       value: quiz,
       icon: <FaClipboardList className="text-green-600 text-3xl" />,
       section: "Quiz",
-      link: "/student-details",
+      link: "/quizzes",
     },
     {
       title: "Ended Quizzes",
