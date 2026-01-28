@@ -1,9 +1,10 @@
-import { Navigate, Outlet } from "react-router-dom";
+import { Navigate, Outlet, useLocation } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
+
 
 const PrivateRoute = ({ role = null }) => {
   const { currentUser, userRole, loading, isAuthenticated } = useAuth();
-
+  const location = useLocation();
   if (loading) {
     // Show loading spinner while checking auth state
     return <div className="flex justify-center items-center h-screen">
