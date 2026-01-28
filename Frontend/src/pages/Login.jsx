@@ -11,8 +11,10 @@ const Login = () => {
   // ⭐ GUEST MODE FUNCTION
   const handleGuestMode = () => {
     localStorage.setItem("guest", "true");
+    localStorage.setItem("authToken", "guest-temp-token");
     localStorage.setItem("userId", "guest-local-id");
     localStorage.setItem("username", "Guest User");
+
     navigate("/studentDashboard");
   };
 
