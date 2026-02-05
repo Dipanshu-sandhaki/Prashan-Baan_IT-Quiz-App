@@ -3,7 +3,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { ChevronsLeft, ChevronsRight, Check } from "lucide-react";
 import Header from "../../utils/Header";
 import { getAllQuestions, SubmitQuizToDB } from "../../apiCalls/examApiManager";
-import { cheatingPrevention } from "../../utils/cheatingPreventManager";
+import { startProctoring } from "../../utils/cheatingPreventManager";
 import Footer from "../../utils/Footer";
 import StudentHeader from "../../components/student/StudentHeader";
 import Swal from "sweetalert2";
@@ -96,7 +96,6 @@ function QuizQuestions() {
         setCategoryQuestionCounder(counts);
         setTotalQuestion(data.length);
         setCategoryStartIndexes(categoryIndexes);
-
       } catch (error) {
         showAlert({
           title: "Error",
@@ -124,7 +123,7 @@ function QuizQuestions() {
   useEffect(() => {
     if (questionsManager.length > 0) {
       const filtered = questionsManager.filter(
-        (q) => q.category === selectedCategory
+        (q) => q.category === selectedCategory,
       );
       setQuestions(filtered);
       setCurrentQuestion(categoryStartIndexes[selectedCategory] - 1);
@@ -134,7 +133,10 @@ function QuizQuestions() {
 
   // Update options + preselected
   useEffect(() => {
-    if (questionsManager.length > 0 && currentQuestion < questionsManager.length) {
+    if (
+      questionsManager.length > 0 &&
+      currentQuestion < questionsManager.length
+    ) {
       setOptions([
         questionsManager[currentQuestion]?.option1,
         questionsManager[currentQuestion]?.option2,
@@ -144,8 +146,8 @@ function QuizQuestions() {
 
       setSelectedOption(
         answerManager[currentQuestion] ??
-        markReviewManager[currentQuestion] ??
-        null
+          markReviewManager[currentQuestion] ??
+          null,
       );
     }
   }, [currentQuestion, questions]);
@@ -175,8 +177,7 @@ function QuizQuestions() {
       [currentQ._id]: {
         question_id: currentQ._id,
         selected_option: selectedOptValue,
-        answer_status:
-          selectedOptValue === currentQ.answer ? "right" : "wrong",
+        answer_status: selectedOptValue === currentQ.answer ? "right" : "wrong",
       },
     }));
 
@@ -201,8 +202,7 @@ function QuizQuestions() {
       [currentQ._id]: {
         question_id: currentQ._id,
         selected_option: selectedOptValue,
-        answer_status:
-          selectedOptValue === currentQ.answer ? "right" : "wrong",
+        answer_status: selectedOptValue === currentQ.answer ? "right" : "wrong",
       },
     }));
 
@@ -268,7 +268,7 @@ function QuizQuestions() {
 
   // CHEATING PREVENTION
   useEffect(() => {
-    cheatingPrevention(async (reason) => {
+    const stop = startProctoring(async (reason) => {
       const isSubmitted = localStorage.getItem("isExamSubmitted");
       if (isSubmitted === "yes") return;
 
@@ -282,24 +282,43 @@ function QuizQuestions() {
       await handleSubmitQuiz();
       navigate("/completion");
     });
+
+    return () => stop(); // properly removes all listeners
+  }, []);
+
+  // BLOCK BACK BUTTON
+  useEffect(() => {
+    const blockBack = () => {
+      Swal.fire({
+        title: "Back Navigation Blocked",
+        text: "You cannot go back during the exam.",
+        icon: "error",
+        timer: 2000,
+        showConfirmButton: false,
+      });
+
+      window.history.pushState(null, null, window.location.href);
+    };
+
+    window.history.pushState(null, null, window.location.href);
+    window.addEventListener("popstate", blockBack);
+
+    return () => window.removeEventListener("popstate", blockBack);
   }, []);
 
   // --------------------------------------------------------
 
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-br from-start via-middle to-end text-white px-4 w-full">
-
       {loading ? (
         <div className="flex flex-grow justify-center items-center h-screen">
           <div className="w-16 h-16 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
         </div>
       ) : (
         <div className="min-h-screen flex flex-col w-full">
-
           <StudentHeader />
 
           <div className="container mx-auto px-4">
-
             {/* Category Selector */}
             <div className="flex flex-wrap justify-between items-center mb-4">
               <div className="flex flex-wrap gap-2">
@@ -324,7 +343,6 @@ function QuizQuestions() {
 
             {/* Main Layout */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-
               {/* Left: Question Box */}
               <div className="md:col-span-2 bg-white bg-opacity-30 px-6 py-4 rounded-md">
                 <h1 className="text-lg font-semibold mb-4 text-white">
@@ -349,7 +367,7 @@ function QuizQuestions() {
                           index,
                           option,
                           questionsManager[currentQuestion]?._id,
-                          questionsManager[currentQuestion]?.answer
+                          questionsManager[currentQuestion]?.answer,
                         )
                       }
                     >
@@ -396,7 +414,6 @@ function QuizQuestions() {
 
               {/* Right: Question Grid */}
               <div className="bg-white bg-opacity-30 p-6 rounded-md max-h-96 overflow-y-auto">
-
                 {categories.map((category, index) => {
                   const count = parseInt(categoryQuestionCounder[index]) || 0;
                   const startNumber = questionNumber;
@@ -413,11 +430,13 @@ function QuizQuestions() {
                             className={`h-10 w-10 flex justify-center items-center rounded-md cursor-pointer ${
                               selectedQuestion === startNumber + i - 1
                                 ? "bg-green-500 text-white"
-                                : answerManager[startNumber + i - 1] !== undefined
-                                ? "bg-green-300 text-white"
-                                : markReviewManager[startNumber + i - 1] !== undefined
-                                ? "bg-red-400 text-white"
-                                : "bg-gray-400 text-white"
+                                : answerManager[startNumber + i - 1] !==
+                                    undefined
+                                  ? "bg-green-300 text-white"
+                                  : markReviewManager[startNumber + i - 1] !==
+                                      undefined
+                                    ? "bg-red-400 text-white"
+                                    : "bg-gray-400 text-white"
                             }`}
                             onClick={() => {
                               setCurrentQuestion(startNumber + i - 1);
@@ -438,16 +457,13 @@ function QuizQuestions() {
                 >
                   Submit Quiz
                 </button>
-
               </div>
-
             </div>
           </div>
 
           <Footer />
         </div>
       )}
-
     </div>
   );
 }

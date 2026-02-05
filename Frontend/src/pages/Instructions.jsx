@@ -29,10 +29,9 @@ const Instructions = () => {
 
     if (isGuest === "true") {
       setName("Guest User");
-      return; // skip backend API!
+      return;
     }
 
-    // Normal logged-in user → fetch from backend
     const getStudentDetails = async () => {
       try {
         const data = await fetchUserData();
@@ -45,21 +44,21 @@ const Instructions = () => {
     getStudentDetails();
   }, []);
 
-  // Countdown
+  // Countdown before START button becomes active
   useEffect(() => {
     if (timeLeft > 0) {
-      const timer = setTimeout(() => setTimeLeft(prev => prev - 1), 1000);
+      const timer = setTimeout(() => setTimeLeft((prev) => prev - 1), 1000);
       return () => clearTimeout(timer);
     } else {
       setIsButtonActive(true);
     }
   }, [timeLeft]);
 
-  // Auto-redirect countdown
+  // Auto-start timer
   useEffect(() => {
     if (isButtonActive && !startPressed) {
       const timer = setTimeout(() => {
-        setRedirectTimer(prev => {
+        setRedirectTimer((prev) => {
           if (prev > 0) return prev - 1;
           handleStartQuiz();
         });
@@ -69,8 +68,26 @@ const Instructions = () => {
     }
   }, [redirectTimer, isButtonActive, startPressed]);
 
+  // ⭐⭐⭐ FULLSCREEN TRIGGER FUNCTION ⭐⭐⭐
+  const launchFullscreen = () => {
+    const el = document.documentElement;
+    if (el.requestFullscreen) {
+      el.requestFullscreen().catch((err) => {
+        console.warn("Fullscreen blocked:", err);
+      });
+    }
+  };
+
+  // ⭐ START QUIZ BUTTON
   const handleStartQuiz = () => {
     setStartPressed(true);
+
+    // 🔥 FULLSCREEN MUST TRIGGER HERE (USER GESTURE)
+    launchFullscreen();
+
+    // Prevent reload / back button
+    window.onbeforeunload = () =>
+      "Exam in progress. Are you sure you want to leave?";
 
     navigate(`/quiz/${quizID.quizId}`);
   };
@@ -78,16 +95,13 @@ const Instructions = () => {
   return (
     <div className="flex flex-col min-h-screen bg-gradient-to-br from-start via-middle to-end relative overflow-hidden px-0 bg-cover bg-no-repeat w-screen h-screen">
       <div className="backdrop-blur-sm flex flex-col grow">
-
         <StudentHeader />
 
         <div className="flex flex-col lg:flex-row justify-center items-center flex-1">
-
           {/* Instructions Box */}
           <div className="bg-center flex justify-center items-center w-full p-6">
             <div className="border-2 hover:shadow-2xl bg-opacity-50 backdrop-blur-md border-slate-600 p-6 rounded-xl lg:w-[720px] shadow-lg bg-marble">
               <div className="max-h-[53vh] overflow-y-auto rounded-lg">
-
                 <h2 className="text-5xl font-bold text-white mt-14 text-center">
                   Instructions
                 </h2>
@@ -102,25 +116,30 @@ const Instructions = () => {
                     title="1. General Guidelines"
                     items={guidelines}
                   />
-                  {Object.entries(examStructure).map(([section, points], index) => (
-                    <InstructionsList
-                      key={index}
-                      title={`${section}`}
-                      items={points}
-                    />
-                  ))}
+
+                  {Object.entries(examStructure).map(
+                    ([section, points], index) => (
+                      <InstructionsList
+                        key={index}
+                        title={`${section}`}
+                        items={points}
+                      />
+                    )
+                  )}
+
                   <InstructionsList title="3. Scoring & Evaluation" items={scoring} />
                   <InstructionsList title="4. Time Limit" items={timeLimit} />
-                  <InstructionsList title="5. Important Instructions" items={importantInstructions} />
+                  <InstructionsList
+                    title="5. Important Instructions"
+                    items={importantInstructions}
+                  />
                 </div>
-
               </div>
             </div>
           </div>
 
           {/* Name + Timer */}
           <WelcomeTimer name={name} timeLeft={timeLeft} />
-
         </div>
 
         {/* Start Button */}
@@ -144,7 +163,6 @@ const Instructions = () => {
             </p>
           )}
         </div>
-
       </div>
 
       <Footer />
