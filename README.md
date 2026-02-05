@@ -147,9 +147,9 @@ This project is licensed under the MIT License – feel free to use and modify w
 ________________________________________
 📬 Contact
 Dipanshu Sandhaki
-📧 Email: [your.email@example.com]
-🔗 GitHub: Dipanshu-sandhaki
-💼 LinkedIn: Your LinkedIn Profile
+📧 Email: dipanshusandhaki17@gmail.com
+🔗 GitHub: https://github.com/Dipanshu-sandhaki
+💼 LinkedIn: https://www.linkedin.com/in/dipanshusandhaki/
 ________________________________________
 
 
