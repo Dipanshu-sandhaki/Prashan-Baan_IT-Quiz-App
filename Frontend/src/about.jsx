@@ -1,12 +1,15 @@
 import React from "react";
+import { Link } from "react-router-dom"; // Imported Link for navigation
 import Header from "./utils/Header.jsx";
 import Footer from "./utils/Footer.jsx";
+import images from "./assets/images";
 
 const Card = ({ name, position, course, image, linkedin }) => (
   <div className="w-[22rem] bg-white border border-gray-200 rounded-lg shadow-lg dark:bg-gray-800 dark:border-gray-700 transition-transform duration-300 hover:scale-105 hover:shadow-xl hover:bg-transparent">
     <a href={linkedin || "#"} target="_blank" rel="noopener noreferrer">
       {image ? (
-        <img className="rounded-t-lg w-full h-64 object-cover" src={image} alt={name} />
+        // Added 'object-top' to align images to the top, preventing face-cropping
+        <img className="rounded-t-lg w-full h-64 object-cover object-top" src={image} alt={name} />
       ) : (
         <div className="rounded-t-lg w-full h-64 flex items-center justify-center bg-gray-300 dark:bg-gray-700 text-4xl font-bold text-gray-800 dark:text-white">
           {name.split(" ").map(n => n[0]).join("")}
@@ -53,24 +56,28 @@ const teamMembers = [
     name: "Bhupendra Singh Bisht",
     position: "Full Stack Developer",
     course: "MCA-USCS",
+    image: images.Bhupendra,
     linkedin: "https://linkedin.com/in/bhupendra-singh-bisht"
   },
   {
     name: "Shubham Kumar",
     position: "Frontend Developer",
     course: "MCA-USCS",
+    image: images.Shubham,
     linkedin: "https://linkedin.com/in/shubhkasyap1"
   },
   {
     name: "Dipanshu Sandhaki",
     position: "Frontend Developer",
     course: "MCA-USCS",
+    image: images.Dipanshu,
     linkedin: "https://linkedin.com/in/dipanshusandhaki"
   },
   {
     name: "Aditya Kumar Singh",
     position: "UI/UX Designer",
     course: "MCA-USCS",
+    image: images.Aditya,
     linkedin: "https://linkedin.com/in/aditya-kumarsingh"
   }
 ];
@@ -78,22 +85,43 @@ const teamMembers = [
 const eventHeads = [
   {
     name: "Ajay Singh Rawat",
-    position: "Tech Head"
+    position: "Tech Head",
+    image: images.Ajay
   },
   {
     name: "Dr. Meera Sharma",
-    position: "Head-Prashan Baan"
+    position: "Head-Prashan Baan",
+    image: images.Meera
   },
   {
     name: "Shivani Sisodia",
-    position: "Event Head"
+    position: "Event Head",
+    image: images.Shivani
   }
 ];
 
 const About = () => {
   return (
-    <div className="min-h-screen flex flex-col bg-gradient-to-br from-start via-middle to-end text-white overflow-hidden items-center w-screen bg-cover bg-no-repeat bg-center">
+    <div className="min-h-screen flex flex-col bg-gradient-to-br from-start via-middle to-end text-white overflow-hidden items-center w-screen bg-cover bg-no-repeat bg-center relative">
       <Header />
+
+      {/* ⭐ Back to Home Button (Top Right) ⭐ */}
+      <Link
+        to="/"
+        className="absolute top-24 right-4 md:top-28 md:right-8 z-50 flex items-center gap-2 px-5 py-2 bg-white/10 backdrop-blur-md border border-white/20 rounded-full text-white font-semibold hover:bg-white/20 transition-all shadow-lg"
+      >
+        <svg 
+          xmlns="http://www.w3.org/2000/svg" 
+          fill="none" 
+          viewBox="0 0 24 24" 
+          strokeWidth={2} 
+          stroke="currentColor" 
+          className="w-4 h-4"
+        >
+          <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
+        </svg>
+        Back to Home
+      </Link>
 
       <main className="flex-1 flex flex-col justify-center items-center text-center gap-12 w-full max-w-6xl px-4">
         <h2 className="text-4xl font-bold mt-16 mb-4">Event Heads</h2>

@@ -8,6 +8,15 @@ import Itquiz from "./logo2.png";
 import thank from "./thank.png";
 import login from "./LoginMain.png";
 
+// New Team Imports (based on your screenshot)
+import Aditya from "./Aditya.jpeg";
+import Dipanshu from "./Dipanshu.jpg"; // Note: .jpg
+import Meera from "./Meera.jpeg";
+import Shivani from "./Shivani.jpeg";
+import Shubham from "./Shubham.jpeg";
+import Ajay from "./Ajay.jpeg";
+import Bhupendra from "./Bhupendra.jpg"; // Note: .jpg
+
 const images = {
   Logo,
   PC,
@@ -17,7 +26,15 @@ const images = {
   ITUtsav,
   LandingBG,
   thank,
-  login
+  login,
+  // New Team Exports
+  Aditya,
+  Dipanshu,
+  Meera,
+  Shivani,
+  Shubham,
+  Ajay,
+  Bhupendra
 };
 
 export default images;
